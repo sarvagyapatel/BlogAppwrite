@@ -2,25 +2,35 @@ import React, { useEffect, useState } from "react";
 import appwriteService from "../appwrite/config";
 import authService from "../appwrite/auth";
 import { Container, PostCard } from "../components";
+import { useDispatch, useSelector } from "react-redux";
+import { addPost } from "../store/postSlice";
 
 function Home() {
   const [posts, setPosts] = useState([]);
 
+  const dispatch = useDispatch ();
+
+  const everyPost = useSelector((state)=>state.allPosts)
+
   const [user, setUser] = useState();
 
-  useEffect(() => {
-    authService.getCurrentUser().then((response) => setUser(response.$id)).catch((error)=>console.log(error));
+  authService.getCurrentUser().then((response) => setUser(response.$id)).catch((error)=>console.log(error));
 
-    if (user !== "") {
-      appwriteService.getPosts().then((posts) => {
-        if (posts) {
-          setPosts(posts.documents);
+  useEffect(() => {
+   
+
+      appwriteService.getPosts().then((newPosts) => {
+        if (newPosts) {
+          setPosts(newPosts.documents);
+          if(posts.length>0){
+            dispatch(addPost(posts));
+          }
         }
       });
-    }
-  }, []);
 
-  if (!user) {
+  }, [user]);
+
+  if (everyPost.length===0) {
     return (
       <div className="w-full py-8 mt-4 text-center">
         <Container>
@@ -41,7 +51,7 @@ function Home() {
       <Container>
         <div className="flex flex-wrap">
           {
-          posts && posts.length >0?  (posts.map((post) => (
+          everyPost && everyPost.length >0?  (everyPost.map((post) => (
             <div key={post.$id} className="p-2 w-1/4">
               <PostCard {...post} />
             </div>
