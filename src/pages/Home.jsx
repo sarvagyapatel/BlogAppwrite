@@ -15,7 +15,7 @@ function Home() {
   useEffect(() => {
       appwriteService.getPosts().then((newPosts) => {
         if (newPosts) {
-          if(newPosts.documents.length>0){
+          if(newPosts.documents.length!=everyPost.length){
             dispatch(addPost(newPosts.documents));
             console.log(everyPost)
           }
