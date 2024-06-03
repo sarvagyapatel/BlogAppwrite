@@ -6,31 +6,25 @@ import { useDispatch, useSelector } from "react-redux";
 import { addPost } from "../store/postSlice";
 
 function Home() {
-  const [posts, setPosts] = useState([]);
+  // const [posts, setPosts] = useState([]);
 
   const dispatch = useDispatch ();
 
   const everyPost = useSelector((state)=>state.allPosts)
 
-  const [user, setUser] = useState();
-
-  authService.getCurrentUser().then((response) => setUser(response.$id)).catch((error)=>console.log(error));
-
   useEffect(() => {
-   
-
       appwriteService.getPosts().then((newPosts) => {
         if (newPosts) {
-          setPosts(newPosts.documents);
-          if(posts.length>0){
-            dispatch(addPost(posts));
+          if(newPosts.documents.length>0){
+            dispatch(addPost(newPosts.documents));
+            console.log(everyPost)
           }
         }
       });
 
-  }, [user]);
+  }, []);
 
-  if (everyPost.length===0) {
+  if (everyPost.length==0) {
     return (
       <div className="w-full py-8 mt-4 text-center">
         <Container>
